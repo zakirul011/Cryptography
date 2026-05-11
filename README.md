@@ -3,9 +3,9 @@ Cryptographic Algorithms
 This repository contains implementations of different cryptographic algorithms for learning and practice purposes.
 
 📂 Contents
-Ceaser cipher
-Monoalphabic
-playfair
+- Ceaser cipher
+- Monoalphabic
+- playfair
 
 🚀 Purpose
 
