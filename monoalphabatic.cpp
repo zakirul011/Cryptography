@@ -2,87 +2,67 @@
 #include <string>
 using namespace std;
 
-string encrypt(string &plaintext, string &key);
-string decrypt(string &ciphertext, string &key);
-
-int main() {
-    string plaintext;
-    string key;
-
-    cout << "Enter plaintext: ";
-    getline(cin, plaintext);
-
-    cout << "Enter key: ";
-    getline(cin, key); // QWERTYUIOPASDFGHJKLZXCVBNM
-
-    if (key.length() != 26)
-    {
-        cout << "Invalid key! Must be 26 letters" << endl;
-        return 1;
-    }
-
-    string ciphertext = encrypt(plaintext, key);
-    string deciphertext = decrypt(ciphertext, key);
-
-    cout << endl;
-    cout << "Plaintext: " << plaintext << endl;
-    cout << "Key: " << key << endl;
-    cout << "Ciphertext: " << ciphertext << endl;
-    cout << "Deciphertext: " << deciphertext << endl;
-}
-
-string encrypt(string &plaintext, string &key)
+string encrypt(string &text, string &key)
 {
-    string ciphertext;    
-    
-    for (char ch : plaintext)
+    string cipher = text;      
+      
+    for (char &ch : cipher)
     {
         if (isupper(ch))
-        {
-            ciphertext += toupper(key[ch - 'A']);
-        }
+            ch = toupper(key[ch - 'A']);
         else if (islower(ch))
-        {
-            ciphertext += tolower(key[ch - 'a']);
-        }
-        else
-        {
-            ciphertext += ch;
-        }
+            ch = tolower(key[ch - 'a']);
     }
 
-    return ciphertext;
+    return cipher;
 }
 
-string decrypt(string &ciphertext, string &key)
+string decrypt(string &cipher, string &key)
 {    
-    string deciphertext;
+    string decipher = cipher;
 
-    for (char ch : ciphertext)
+    for (char &ch : decipher)
     {
-        for (int i = 0; i < 26; i++)
+        if (toupper(ch) >= 'A' && toupper(ch) <= 'Z')
         {
-            if (toupper(ch) == key[i])
+            for (int i = 0; i < 26; i++)
             {
-
-                if (isupper(ch))
+                if (toupper(ch) == key[i])
                 {
-                    deciphertext += char(i + 'A');
+                    if (isupper(ch))
+                        ch = char(i + 'A'); 
+                    else               
+                        ch = char(i + 'a'); 
+                    break;
                 }
-                else if (islower(ch))
-                {
-                    deciphertext += char(i + 'a');
-                }
-                else
-                {
-                    deciphertext += ch;
-                }
-
-                break;
-
             }
         }
     }
 
-    return deciphertext;
+    return decipher;
+}
+
+int main() {
+    string plain, key;
+
+    cout << "Enter plaintext: ";
+    getline(cin, plain);
+
+    cout << "Enter key: ";
+    getline(cin, key); // TVDRQYUMOPASEFGHJKLZXCWBNI
+
+    if (key.length() != 26)
+    {
+        cout << "Key Must be 26 letters!!" << endl;
+        return 1;
+    }
+
+    string cipher = encrypt(plain, key);
+    string decipher = decrypt(cipher, key);
+
+    cout << endl;
+    cout << "Plaintext: " << plain << endl;
+    cout << "Key: " << key << endl;
+    cout << "Ciphertext: " << cipher << endl;
+    cout << "Deciphertext: " << decipher << endl;
 }

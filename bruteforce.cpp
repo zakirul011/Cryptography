@@ -9,7 +9,7 @@ void bruteforce(string &ciphertext);
 int main() {
     string ciphertext;
 
-    cout << "Enter Ciphertext: ";
+    cout << "Enter the Ciphertext: ";
     getline(cin, ciphertext);
 
     bruteforce(ciphertext);
@@ -22,37 +22,30 @@ void bruteforce(string &ciphertext)
 
     while (key < 26)
     {
-        cout << "key " << key << ": " << decrypt(ciphertext, key) << endl;
+        cout << "For key " << key << ", plaintext: " << decrypt(ciphertext, key) << endl;
         key++;
     }
 }
 
-string encrypt(string &plaintext, int key)
+string encrypt(string &text, int key)
 {
+    string cipher;
     key = key % 26;
 
-    string ciphertext;
-
-    for (char ch : plaintext)
+    for (char c : text)
     {
-        if (isupper(ch))
-        {
-            ciphertext += ( ch - 'A' + key ) % 26 + 'A';
-        }
-        else if (islower(ch))
-        {
-            ciphertext += ( ch - 'a' + key ) % 26 + 'a';
-        }
+        if (isupper(c))
+            cipher += ( c - 'A' + key ) % 26 + 'A';
+        else if (islower(c))
+            cipher += ( c - 'a' + key ) % 26 + 'a';
         else
-        {
-            ciphertext += ch;
-        }
+            cipher += c;
     }
 
-    return ciphertext;
+    return cipher;
 }
 
-string decrypt(string &ciphertext, int key)
+string decrypt(string &text, int key)
 {    
-    return encrypt(ciphertext, 26 - key);
+    return encrypt(text, 26 - key);
 }

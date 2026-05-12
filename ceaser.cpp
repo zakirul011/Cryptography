@@ -4,70 +4,49 @@ using namespace std;
 
 string encrypt(string &plaintext, int key);
 string decrypt(string &ciphertext, int key);
-void bruteforce(string &ciphertext);
 
 int main() {
     string plaintext;
-    int key;
+    int key = 0;
 
-    cout << "Enter plaintext: ";
+    cout << "Enter the plaintext: ";
     getline(cin, plaintext);
-
-    cout << "Enter key: ";
-    cin >> key;
+        
+    while (key < 1 || key > 25)
+    {
+        cout << "Enter the key between 1 and 25: ";
+        cin >> key;
+    }
 
     string ciphertext = encrypt(plaintext, key);
-    string deciphertext = decrypt(ciphertext, key);
+    string decryptedtext = decrypt(ciphertext, key);
 
     cout << endl;
     cout << "Plaintext: " << plaintext << endl;
     cout << "Key: " << key << endl;
-    cout << "Ciphertext: " << ciphertext << endl;
-    cout << "Deciphertext: " << deciphertext << endl;
-
-    bruteforce(ciphertext);
+    cout << "Cipher text: " << ciphertext << endl;
+    cout << "Decrypted text: " << decryptedtext << endl;
 }
 
-
-void bruteforce(string &ciphertext)
+string encrypt(string &text, int key)
 {
-    cout << ciphertext << endl;
-
-    int key = 1;
-
-    while (key < 26)
-    {
-        cout << "key " << key << ": " << decrypt(ciphertext, key) << endl;
-        key++;
-    }
-}
-
-string encrypt(string &plaintext, int key)
-{
+    string cipher;
     key = key % 26;
 
-    string ciphertext;
-
-    for (char ch : plaintext)
+    for (char c : text)
     {
-        if (isupper(ch))
-        {
-            ciphertext += ( ch - 'A' + key ) % 26 + 'A';
-        }
-        else if (islower(ch))
-        {
-            ciphertext += ( ch - 'a' + key ) % 26 + 'a';
-        }
+        if (isupper(c))
+            cipher += ( c - 'A' + key ) % 26 + 'A';
+        else if (islower(c))
+            cipher += ( c - 'a' + key ) % 26 + 'a';
         else
-        {
-            ciphertext += ch;
-        }
+            cipher += c;
     }
 
-    return ciphertext;
+    return cipher;
 }
 
-string decrypt(string &ciphertext, int key)
+string decrypt(string &text, int key)
 {    
-    return encrypt(ciphertext, 26 - key);
+    return encrypt(text, 26 - key);
 }
