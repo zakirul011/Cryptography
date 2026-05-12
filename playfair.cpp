@@ -44,6 +44,8 @@ string encrypt(string &plaintext, string &key)
     generateKeyMatrix(key);
     string result = prepareText(plaintext);
 
+    cout << "Pre: " << result << endl;
+
     string ciphertext;
 
     for (int i = 0, n = result.length(); i < n; i += 2)
@@ -187,13 +189,14 @@ string prepareText(string &plaintext)
     {
         if (i + 1 == n)
         {
-            result[i + 1] = 'X';
+            result += 'X';
             break;
         }
 
         if (result[i] == result[i + 1])
         {
-            result.insert(i + 1, 1, 'X');            
+            result.insert(i + 1, 1, 'X');
+            n++;
         }
     }
 
