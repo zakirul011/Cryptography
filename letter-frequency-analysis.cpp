@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <iomanip>
 using namespace std;
 
 struct letterFreq{
@@ -41,7 +42,10 @@ int main(void)
         if (count > 0)
         {
             float percent = float(count) / totalLetters * 100;
-            cout << ch << " appears " << count << " times ("<< percent << "%)" << endl;
+            cout << ch << " appears " << count 
+            << " times ("
+            << fixed << setprecision(2)
+            << percent << "%)" << endl;
         }
         
 
