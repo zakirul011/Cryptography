@@ -2,51 +2,50 @@
 #include <string>
 using namespace std;
 
-// functions
-string encrypt(string &plaintext, string &key);
-string decrypt(string &ciphertext);
-void generateKeyMatrix(string &key);
-string prepareText(string &plaintext);
+// functions prototypes
+string generate_cipher(string &plaintext, string &key);
+string generate_decipher(string &ciphertext);
+void generate_key_matrix(string &key);
+string text_preparation(string &plaintext);
 void findPosition(char ch, int &r, int &c);
 
 char matrix[5][5];
 
-// main
+// main function
 int main() {
-    string plaintext;
-    string key;
+    string plaintext, key;
 
-    cout << "Enter plaintext: ";
+    cout << "Enter the plaintext: ";
     getline(cin, plaintext);
 
-    cout << "Enter key: ";
+    cout << "Enter the key: ";
     getline(cin, key);
 
     if (key.length() > 26)
     {
-        cout << "Invalid key! Must be less than or equal 26 letters" << endl;
+        cout << "Key must not be greater than 26 letters" << endl;
         return 1;
     }
 
-    string ciphertext = encrypt(plaintext, key);
-    string deciphertext = decrypt(ciphertext);
+    string cipher = generate_cipher(plaintext, key);
+    string deccipher = generate_decipher(cipher);
 
     cout << endl;
     cout << "Plaintext: " << plaintext << endl;
     cout << "Key: " << key << endl;
-    cout << "Ciphertext: " << ciphertext << endl;
-    cout << "Deciphertext: " << deciphertext << endl;
+    cout << "Ciphertext: " << cipher << endl;
+    cout << "Deciphertext: " << deccipher << endl;
 }
 
-// Encrypt
-string encrypt(string &plaintext, string &key)
+// generate_cipher
+string generate_cipher(string &plaintext, string &key)
 {
-    generateKeyMatrix(key);
-    string result = prepareText(plaintext);
+    generate_key_matrix(key);
+    string result = text_preparation(plaintext);
 
-    cout << "Pre: " << result << endl;
+    cout << "Prepared plaintext: " << result << endl;
 
-    string ciphertext;
+    string cipher;
 
     for (int i = 0, n = result.length(); i < n; i += 2)
     {
@@ -60,28 +59,28 @@ string encrypt(string &plaintext, string &key)
 
         if (r1 == r2)
         {
-            ciphertext += matrix[r1][(c1 + 1) % 5];
-            ciphertext += matrix[r2][(c2 + 1) % 5];
+            cipher += matrix[r1][(c1 + 1) % 5];
+            cipher += matrix[r2][(c2 + 1) % 5];
         }
         else if (c1 == c2)
         {
-            ciphertext += matrix[(r1 + 1) % 5][c1];
-            ciphertext += matrix[(r2 + 1) % 5][c2];
+            cipher += matrix[(r1 + 1) % 5][c1];
+            cipher += matrix[(r2 + 1) % 5][c2];
         }
         else
         {
-            ciphertext += matrix[r1][c2];
-            ciphertext += matrix[r2][c1];
+            cipher += matrix[r1][c2];
+            cipher += matrix[r2][c1];
         }
     }
 
-    return ciphertext;
+    return cipher;
 }
 
-// Decrypt
-string decrypt(string &ciphertext)
+// generate_decipher
+string generate_decipher(string &ciphertext)
 {    
-    string deciphertext;
+    string decipher;
 
     for (int i = 0, n = ciphertext.length(); i < n; i += 2)
     {
@@ -95,27 +94,27 @@ string decrypt(string &ciphertext)
 
         if (r1 == r2)
         {
-            deciphertext += matrix[r1][(c1 + 4) % 5];
-            deciphertext += matrix[r2][(c2 + 4) % 5];
+            decipher += matrix[r1][(c1 + 4) % 5];
+            decipher += matrix[r2][(c2 + 4) % 5];
         }
         else if (c1 == c2)
         {
-            deciphertext += matrix[(r1 + 4) % 5][c1];
-            deciphertext += matrix[(r2 + 4) % 5][c2];
+            decipher += matrix[(r1 + 4) % 5][c1];
+            decipher += matrix[(r2 + 4) % 5][c2];
         }
         else
         {
-            deciphertext += matrix[r1][c2];
-            deciphertext += matrix[r2][c1];
+            decipher += matrix[r1][c2];
+            decipher += matrix[r2][c1];
         }
     }
 
-    return deciphertext;
+    return decipher;
 }
 
 
 // generate key matrix
-void generateKeyMatrix(string &key)
+void generate_key_matrix(string &key)
 {
     // key genration
     string used;
@@ -125,9 +124,7 @@ void generateKeyMatrix(string &key)
     {
         c = toupper(c);
         if (c == 'J')
-        {
             c = 'I';
-        }        
 
         if (used.find(c) == string::npos)
         {
@@ -140,9 +137,7 @@ void generateKeyMatrix(string &key)
     for (char c = 'A'; c >= 'A' && c <= 'Z'; c++)
     {
         if (c == 'J')
-        {
             continue;
-        }
 
         if (used.find(c) == string::npos)
         {
@@ -153,7 +148,7 @@ void generateKeyMatrix(string &key)
     }
 
     // print the generated key matrix
-    cout << endl;
+    cout << "\nGenerated key matrix" << endl;
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j < 5; j++)
@@ -165,7 +160,7 @@ void generateKeyMatrix(string &key)
 }
 
 // plain text preparation
-string prepareText(string &plaintext)
+string text_preparation(string &plaintext)
 {
     string result;
 
@@ -176,9 +171,7 @@ string prepareText(string &plaintext)
             c = toupper(c);
 
             if (c == 'J')
-            {
                 c = 'I';
-            }
 
             result += c;
         }

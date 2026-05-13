@@ -15,7 +15,6 @@ int main() {
     bruteforce(ciphertext);
 }
 
-
 void bruteforce(string &ciphertext)
 {   
     int key = 1;
