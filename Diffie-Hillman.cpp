@@ -8,7 +8,6 @@ int modPow(int b, int e, int m);
 
 int main(void)
 {
-
     int p;
     cout << "Enter prime number: ";
     cin >> p;
@@ -18,7 +17,6 @@ int main(void)
         cout << "This is not a prime number!";
         return 1;
     }
-
 
     int g;
     cout << "Enter generator: ";
@@ -30,28 +28,20 @@ int main(void)
         return 1;
     }
 
-
     int a;
     cout << "Enter private key of Alice: ";
     cin >> a;
-
     int A = modPow(g, a, p);
-
 
     int b;
     cout << "Enter private key of Bob: ";
     cin >> b;
-
-
-
     int B = modPow(g, b, p);
-
 
     int k_A = modPow(B, a, p);
     int k_B = modPow(A, b, p);    
 
     cout << endl;
-
     cout << "Private key of Alice: " << a << endl;
     cout << "Private key of Bob: " << b << endl;
 
@@ -60,6 +50,11 @@ int main(void)
 
     cout << "Generated key of Alice: " << k_A << endl;
     cout << "Generated key of Bob: " << k_B << endl;
+
+    if (k_A == k_B)
+        cout << "Same key generated.";
+    else 
+        cout << "Keys are not generated correctly.";
 }
 
 bool isPrime(int n)

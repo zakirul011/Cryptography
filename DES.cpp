@@ -1,33 +1,32 @@
 #include <iostream>
 #include <bitset>
-#include <string>
 using namespace std;
 
-// Initial Permutation Table (first few enough for demo)
+// IP
 int IP[64] = {
-    58,50,42,34,26,18,10,2,
-    60,52,44,36,28,20,12,4,
-    62,54,46,38,30,22,14,6,
-    64,56,48,40,32,24,16,8,
-    57,49,41,33,25,17,9,1,
-    59,51,43,35,27,19,11,3,
-    61,53,45,37,29,21,13,5,
-    63,55,47,39,31,23,15,7
+    58, 50, 42, 34, 26, 18, 10, 2,
+    60, 52, 44, 36, 28, 20, 12, 4,
+    62, 54, 46, 38, 30, 22, 14, 6,
+    64, 56, 48, 40, 32, 24, 16, 8,
+    57, 49, 41, 33, 25, 17, 9, 1,
+    59, 51, 43, 35, 27, 19, 11, 3,
+    61, 53, 45, 37, 29, 21, 13, 5,
+    63, 55, 47, 39, 31, 23, 15, 7
 };
 
-// Expansion Permutation Table
+// E-box
 int E[48] = {
-    32,1,2,3,4,5,
-    4,5,6,7,8,9,
-    8,9,10,11,12,13,
-    12,13,14,15,16,17,
-    16,17,18,19,20,21,
-    20,21,22,23,24,25,
-    24,25,26,27,28,29,
-    28,29,30,31,32,1
+    32, 1, 2, 3, 4, 5,
+    4, 5, 6, 7, 8, 9,
+    8, 9, 10, 11, 12, 13,
+    12, 13, 14, 15, 16, 17,
+    16, 17, 18, 19, 20, 21,
+    20, 21, 22, 23, 24, 25,
+    24, 25, 26, 27, 28, 29,
+    28, 29, 30, 31, 32, 1
 };
 
-// Simple S-Box (S1 only)
+// One S-box
 int S1[4][16] = {
     {14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7},
     {0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8},
@@ -35,101 +34,156 @@ int S1[4][16] = {
     {15,12,8,2,4,9,1,7,5,11,3,14,10,0,6,13}
 };
 
-string permute(string input, int table[], int size)
-{
-    string output = "";
+// P-box
+int P[32] = {
+    16,7,20,21,
+    29,12,28,17,
+    1,15,23,26,
+    5,18,31,10,
+    2,8,24,14,
+    32,27,3,9,
+    19,13,30,6,
+    22,11,4,25
+};
 
-    for (int i = 0; i < size; i++)
+// Initial Permutation
+bitset<64> initialPermutation(bitset<64> input)
+{
+    bitset<64> output;
+
+    for (int i = 0; i < 64; i++)
     {
-        output += input[table[i] - 1];
+        output[63 - i] = input[64 - IP[i]];
     }
 
     return output;
 }
 
-string XOR(string a, string b)
+// Expansion Permutation
+bitset<48> expansion(bitset<32> R)
 {
-    string result = "";
+    bitset<48> res;
 
-    for (int i = 0; i < a.size(); i++)
+    for (int i = 0; i < 48; i++)
     {
-        if (a[i] == b[i])
-            result += '0';
-        else
-            result += '1';
+        res[47 - i] = R[32 - E[i]];
     }
 
-    return result;
+    return res;
 }
 
-string decimalToBinary(int num)
+// S-box substitution
+bitset<32> sboxSubstitution(bitset<48> input)
 {
-    bitset<4> b(num);
-    return b.to_string();
+    bitset<32> output;
+
+    for (int i = 0; i < 8; i++)
+    {
+        int row =
+            input[47 - (i * 6)] * 2 +
+            input[47 - (i * 6 + 5)];
+
+        int col = 0;
+
+        for (int j = 1; j <= 4; j++)
+        {
+            col = col * 2 +
+                  input[47 - (i * 6 + j)];
+        }
+
+        int val = S1[row][col];
+
+        for (int j = 0; j < 4; j++)
+        {
+            output[31 - (i * 4 + j)] =
+                (val >> (3 - j)) & 1;
+        }
+    }
+
+    return output;
+}
+
+// P-box permutation
+bitset<32> permutation(bitset<32> input)
+{
+    bitset<32> output;
+
+    for (int i = 0; i < 32; i++)
+    {
+        output[31 - i] = input[32 - P[i]];
+    }
+
+    return output;
 }
 
 int main()
 {
-    // Example plaintext (64-bit)
-    string plaintext ="0001001000110100010101100111100010011010101111001101111011110001";
+    // 64-bit plaintext
+    bitset<64> plaintext(
+        "0001001000110100010101100111100010011010101111001101111011110001"
+    );
 
-    // Example round key (48-bit)
-    string roundKey = "000110110000001011101111111111000111000001110010";
+    // 48-bit round key
+    bitset<48> subkey(
+        "000110110000001011101111111111000111000001110010"
+    );
 
-    cout << "Original Plaintext:\n";
-    cout << plaintext << endl << endl;
+    cout << "Original Plaintext:\n"
+         << plaintext << endl;
 
-    // Step 1: Initial Permutation
-    string ip = permute(plaintext, IP, 64);
 
-    cout << "After Initial Permutation:\n";
-    cout << ip << endl << endl;
+    // Initial Permutation
+    bitset<64> IP_output = initialPermutation(plaintext);
 
-    // Step 2: Split into Left and Right halves
-    string L = ip.substr(0, 32);
-    string R = ip.substr(32, 32);
+    cout << "\nAfter Initial Permutation:\n"
+         << IP_output << endl;
 
-    cout << "Left Half (L):\n";
-    cout << L << endl << endl;
+    // Split into L and R
+    bitset<32> L, R;
 
-    cout << "Right Half (R):\n";
-    cout << R << endl << endl;
+    for (int i = 0; i < 32; i++)
+    {
+        L[31 - i] = IP_output[63 - i];
+        R[31 - i] = IP_output[31 - i];
+    }
 
-    // Step 3: Expansion Permutation
-    string expandedR = permute(R, E, 48);
+    cout << "\nLeft Half:\n"
+         << L << endl;
 
-    cout << "Expanded Right Half:\n";
-    cout << expandedR << endl << endl;
+    cout << "\nRight Half:\n"
+         << R << endl;
 
-    // Step 4: XOR with Round Key
-    string xorResult = XOR(expandedR, roundKey);
+    // Expansion Permutation
+    bitset<48> R_expanded = expansion(R);
 
-    cout << "After XOR with Round Key:\n";
-    cout << xorResult << endl << endl;
+    cout << "\nExpanded R:\n"
+         << R_expanded << endl;
 
-    // Step 5: S-Box Substitution
-    // Using only first 6 bits for demo
+    // XOR with Round Key
+    bitset<48> R_xor_key = R_expanded ^ subkey;
 
-    string sixBits = xorResult.substr(0, 6);
+    cout << "\nAfter XOR with Round Key:\n"
+         << R_xor_key << endl;
 
-    string rowBits = "";
-    rowBits += sixBits[0];
-    rowBits += sixBits[5];
+    // S-box Substitution
+    bitset<32> S_output = sboxSubstitution(R_xor_key);
 
-    string colBits = sixBits.substr(1, 4);
+    cout << "\nAfter S-box Substitution:\n"
+         << S_output << endl;
 
-    int row = stoi(rowBits, 0, 2);
-    int col = stoi(colBits, 0, 2);
+    // P-box Permutation
+    bitset<32> P_output = permutation(S_output);
 
-    int sboxValue = S1[row][col];
+    cout << "\nAfter P-box Permutation:\n"
+         << P_output << endl;
+         
+    // Final Round Result
+    bitset<32> newR = L ^ P_output;
+    bitset<32> newL = R;
 
-    string sboxBinary = decimalToBinary(sboxValue);
+    cout << "\nNew Left:\n"
+         << newL << endl;
 
-    cout << "First 6 bits for S-Box:\n";
-    cout << sixBits << endl << endl;
-
-    cout << "S-Box Output:\n";
-    cout << sboxBinary << endl;
-
-    return 0;
+    cout << "\nNew Right:\n"
+         << newR << endl;
 }
